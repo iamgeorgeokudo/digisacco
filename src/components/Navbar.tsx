@@ -1,5 +1,4 @@
-
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, Moon, Sun, ChevronDown, Image, Download, X } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
@@ -10,6 +9,7 @@ const Navbar = () => {
   const [showMediaMenu, setShowMediaMenu] = useState(false);
   const [showBoardMenu, setShowBoardMenu] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   
   const mediaMenuRef = useRef<HTMLDivElement>(null);
   const boardMenuRef = useRef<HTMLDivElement>(null);
@@ -56,11 +56,23 @@ const Navbar = () => {
     return location.pathname.startsWith(path);
   };
 
+  // Handle dropdown link click in mobile menu
+  const handleMobileMenuLinkClick = (path: string) => {
+    setIsMenuOpen(false);
+    setShowMediaMenu(false);
+    setShowBoardMenu(false);
+  };
+
+  // Handle mobile dropdown header click - both toggle dropdown and navigate
+  const handleMobileDropdownClick = (path: string, toggleFunction: React.Dispatch<React.SetStateAction<boolean>>) => {
+    toggleFunction(current => !current);
+    navigate(path);
+  };
+
   return (
     <nav className="glass bg-white/80 dark:bg-sacco-blue/80 backdrop-blur-xl shadow-sm fixed w-full top-0 z-50 transition-colors duration-300">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-20">
-          {/* Logo and mobile menu elements */}
           <div className="flex items-center">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -75,7 +87,6 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Desktop navigation - all on one line */}
           <div className="hidden md:flex items-center space-x-1 lg:space-x-2">
             <Link 
               to="/" 
@@ -121,7 +132,6 @@ const Navbar = () => {
               SERVICES
             </Link>
             
-            {/* Board Members - Desktop */}
             <div 
               ref={boardMenuRef}
               className="relative group"
@@ -137,7 +147,6 @@ const Navbar = () => {
                 BOARD MEMBERS
               </Link>
               
-              {/* Dropdown for Board Members - Desktop */}
               <div className="absolute left-0 mt-0 w-60 hidden group-hover:block glass bg-white/90 dark:bg-sacco-blue/90 backdrop-blur-xl shadow-lg rounded-md overflow-hidden border dark:border-gray-700 z-50 animate-fade-in">
                 <div className="py-1">
                   <Link 
@@ -190,7 +199,6 @@ const Navbar = () => {
               TENDERS
             </Link>
             
-            {/* Media links - Desktop */}
             <div 
               ref={mediaMenuRef}
               className="relative group"
@@ -206,7 +214,6 @@ const Navbar = () => {
                 MEDIA
               </Link>
               
-              {/* Dropdown for Media - Desktop */}
               <div className="absolute left-0 mt-0 w-40 hidden group-hover:block glass bg-white/90 dark:bg-sacco-blue/90 backdrop-blur-xl shadow-lg rounded-md overflow-hidden border dark:border-gray-700 z-50 animate-fade-in">
                 <div className="py-1">
                   <Link 
@@ -259,7 +266,6 @@ const Navbar = () => {
             </Link>
           </div>
           
-          {/* Dark mode toggle - moved to the far right */}
           <button
             onClick={() => setIsDarkMode(!isDarkMode)}
             className="p-2 rounded-full hover:bg-gray-100/50 dark:hover:bg-sacco-blue/50 transition-colors"
@@ -272,7 +278,6 @@ const Navbar = () => {
           </button>
         </div>
 
-        {/* Mobile menu with X close button */}
         {isMenuOpen && (
           <div className="md:hidden py-4 glass bg-white/90 dark:bg-sacco-blue/90 backdrop-blur-xl border-t dark:border-gray-700">
             <div className="flex justify-end px-4 mb-2">
@@ -292,7 +297,7 @@ const Navbar = () => {
               <div className="px-4 py-2">
                 <button 
                   className="flex items-center text-sacco-blue dark:text-white hover:text-sacco-orange transition-colors"
-                  onClick={() => setShowBoardMenu(!showBoardMenu)}
+                  onClick={() => handleMobileDropdownClick('/board-members', setShowBoardMenu)}
                 >
                   BOARD MEMBERS <ChevronDown className={`h-4 w-4 ml-1 transition-transform duration-200 ${showBoardMenu ? 'rotate-180' : ''}`} />
                 </button>
@@ -302,24 +307,28 @@ const Navbar = () => {
                     <Link 
                       to="/board-members" 
                       className="block text-sacco-blue dark:text-white hover:text-sacco-orange transition-colors"
+                      onClick={() => handleMobileMenuLinkClick('/board-members')}
                     >
                       Board Members
                     </Link>
                     <Link 
                       to="/delegates-2015-2022" 
                       className="block text-sacco-blue dark:text-white hover:text-sacco-orange transition-colors"
+                      onClick={() => handleMobileMenuLinkClick('/delegates-2015-2022')}
                     >
                       Delegates Lists 2015-2022
                     </Link>
                     <Link 
                       to="/delegates-2022-2023" 
                       className="block text-sacco-blue dark:text-white hover:text-sacco-orange transition-colors"
+                      onClick={() => handleMobileMenuLinkClick('/delegates-2022-2023')}
                     >
                       Delegate List 2022-2023
                     </Link>
                     <Link 
                       to="/delegates-2024" 
                       className="block text-sacco-blue dark:text-white hover:text-sacco-orange transition-colors"
+                      onClick={() => handleMobileMenuLinkClick('/delegates-2024')}
                     >
                       Nominated Delegates 2024
                     </Link>
@@ -333,7 +342,7 @@ const Navbar = () => {
               <div className="px-4 py-2">
                 <button 
                   className="flex items-center text-sacco-blue dark:text-white hover:text-sacco-orange transition-colors"
-                  onClick={() => setShowMediaMenu(!showMediaMenu)}
+                  onClick={() => handleMobileDropdownClick('/media/gallery', setShowMediaMenu)}
                 >
                   MEDIA <ChevronDown className={`h-4 w-4 ml-1 transition-transform duration-200 ${showMediaMenu ? 'rotate-180' : ''}`} />
                 </button>
@@ -343,12 +352,14 @@ const Navbar = () => {
                     <Link 
                       to="/media/gallery" 
                       className="flex items-center text-sacco-blue dark:text-white hover:text-sacco-orange transition-colors"
+                      onClick={() => handleMobileMenuLinkClick('/media/gallery')}
                     >
                       <Image className="w-4 h-4 mr-2" /> Gallery
                     </Link>
                     <Link 
                       to="/media/downloads" 
                       className="flex items-center text-sacco-blue dark:text-white hover:text-sacco-orange transition-colors"
+                      onClick={() => handleMobileMenuLinkClick('/media/downloads')}
                     >
                       <Download className="w-4 h-4 mr-2" /> Downloads
                     </Link>
@@ -368,4 +379,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
