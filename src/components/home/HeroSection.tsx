@@ -15,11 +15,9 @@ const HeroSection = () => {
           </p>
           <div className="flex justify-center gap-4">
             <button className="glass bg-sacco-orange/90 text-white px-8 py-3 rounded-full hover:bg-opacity-90 transition-all transform hover:-translate-y-1">
-              Join Now
-            </button>
+              <Link to="/products">Join Now</Link></button>
             <button className="glass border-2 border-sacco-blue/20 dark:border-white/20 text-sacco-blue dark:text-white px-8 py-3 rounded-full hover:bg-sacco-blue/10 dark:hover:bg-white/10 transition-all transform hover:-translate-y-1">
-              Learn More
-            </button>
+              <Link to="/services">Learn More</Link></button>
           </div>
         </div>
       </div>
