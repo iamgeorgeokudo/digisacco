@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Products from "./pages/Products";
@@ -20,6 +20,18 @@ import Elections from "./pages/Elections";
 import FloatingAdverts from "./components/FloatingAdverts";
 
 const queryClient = new QueryClient();
+
+// Wrapper component to conditionally render FloatingAdverts
+const FloatingAdvertsWrapper = () => {
+  const location = useLocation();
+  
+  // Only show FloatingAdverts if we're not on the home page
+  if (location.pathname === '/') {
+    return null;
+  }
+  
+  return <FloatingAdverts />;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -45,7 +57,7 @@ const App = () => (
           <Route path="/elections" element={<Elections />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-        <FloatingAdverts />
+        <FloatingAdvertsWrapper />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
